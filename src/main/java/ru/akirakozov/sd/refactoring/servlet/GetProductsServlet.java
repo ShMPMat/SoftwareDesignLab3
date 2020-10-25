@@ -20,6 +20,8 @@ public class GetProductsServlet extends HttpServlet {
             try (Connection c = DriverManager.getConnection("jdbc:sqlite:test.db")) {
                 Statement stmt = c.createStatement();
                 ResultSet rs = stmt.executeQuery("SELECT * FROM PRODUCT");
+                System.out.println("123456");
+                System.out.println(rs);
                 response.getWriter().println("<html><body>");
 
                 while (rs.next()) {
