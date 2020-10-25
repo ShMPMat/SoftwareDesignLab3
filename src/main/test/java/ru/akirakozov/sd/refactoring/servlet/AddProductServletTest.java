@@ -9,7 +9,6 @@ import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import ru.akirakozov.sd.refactoring.Main;
 import ru.akirakozov.sd.refactoring.RunTestServer;
 
 import java.sql.*;
@@ -19,14 +18,14 @@ import static org.mockito.Mockito.*;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 
-@PowerMockIgnore({ "javax.net.ssl.*", "javax.security.*", "jdk.internal.reflect.*" })
+@PowerMockIgnore({"javax.net.ssl.*", "javax.security.*", "jdk.internal.reflect.*"})
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ DriverManager.class, GetProductsServlet.class, AddProductServlet.class })
+@PrepareForTest({DriverManager.class, GetProductsServlet.class, AddProductServlet.class})
 public class AddProductServletTest {
     private static final String WEBSITE_URL = "http://localhost:8081";
 
     private WebTester webTester;
-    private Statement queryStatement;
+    private Connection connection;
 
     @BeforeClass
     public static void runServer() {
@@ -38,15 +37,17 @@ public class AddProductServletTest {
         webTester = new WebTester();
         webTester.setTestingEngineKey(TestingEngineRegistry.TESTING_ENGINE_HTMLUNIT);
         webTester.getTestContext().setBaseUrl(WEBSITE_URL);
+        connection = DriverManager.getConnection("jdbc:sqlite:unitTest.db");
 
-        queryStatement = mock(Statement.class);
-        final Connection connection = mock(Connection.class);
+        String sql = "DELETE FROM PRODUCT";
+        Statement statement = connection.createStatement();
+        statement.executeUpdate(sql);
+        statement.close();
+
+        Connection testConnection = DriverManager.getConnection("jdbc:sqlite:unitTest.db");
         mockStatic(DriverManager.class);
-
-        when(connection.createStatement())
-                .thenReturn(queryStatement);
         when(DriverManager.getConnection("jdbc:sqlite:test.db"))
-                .thenReturn(connection);
+                .thenReturn(testConnection);
     }
 
     @Test
@@ -66,7 +67,13 @@ public class AddProductServletTest {
 
         webTester.assertResponseCode(200);
 
-        verify(queryStatement)
-                .executeUpdate("INSERT INTO PRODUCT (NAME, PRICE) VALUES (\"" + name + "\"," + price + ")");
+        System.out.println(DriverManager.getConnection("jdbc:sqlite:unitTest.db"));
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery("SELECT * FROM PRODUCT");
+
+        assertTrue(resultSet.next());
+        assertEquals(name, resultSet.getString("name"));
+        assertEquals(price, resultSet.getString("price"));
+        assertFalse(resultSet.next());
     }
 }
