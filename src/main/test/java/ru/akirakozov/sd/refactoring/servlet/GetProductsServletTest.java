@@ -55,18 +55,11 @@ public class GetProductsServletTest {
         final Statement statement = mock(Statement.class);
         final Connection connection = mock(Connection.class);
         resultQuerySet = mock(ResultSet.class);
-
-        when(resultQuerySet.next())
-                .thenReturn(true)
-                .thenReturn(false);
-
-        when(connection.createStatement()).thenReturn(statement);
-
         mockStatic(DriverManager.class);
 
+        when(connection.createStatement()).thenReturn(statement);
         when(DriverManager.getConnection("jdbc:sqlite:test.db"))
                 .thenReturn(connection);
-
         when(statement.executeQuery("SELECT * FROM PRODUCT")).thenReturn(resultQuerySet);
     }
 
