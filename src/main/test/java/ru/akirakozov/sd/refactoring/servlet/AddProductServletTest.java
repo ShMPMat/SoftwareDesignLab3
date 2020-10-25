@@ -1,7 +1,6 @@
 package ru.akirakozov.sd.refactoring.servlet;
 
 import net.sourceforge.jwebunit.junit.WebTester;
-import net.sourceforge.jwebunit.util.TestingEngineRegistry;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -9,12 +8,12 @@ import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import ru.akirakozov.sd.refactoring.RunTestServer;
+import ru.akirakozov.sd.refactoring.SetUpServer;
 
 import java.sql.*;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 
@@ -29,20 +28,13 @@ public class AddProductServletTest {
 
     @BeforeClass
     public static void runServer() {
-        RunTestServer.run();
+        SetUpServer.runServer();
     }
 
     @Before
     public void start() throws SQLException {
-        webTester = new WebTester();
-        webTester.setTestingEngineKey(TestingEngineRegistry.TESTING_ENGINE_HTMLUNIT);
-        webTester.getTestContext().setBaseUrl(WEBSITE_URL);
-        connection = DriverManager.getConnection("jdbc:sqlite:unitTest.db");
-
-        String sql = "DELETE FROM PRODUCT";
-        Statement statement = connection.createStatement();
-        statement.executeUpdate(sql);
-        statement.close();
+        webTester = SetUpServer.setUpWebTester();
+        connection = SetUpServer.setUpTestDbConnection();
 
         Connection testConnection = DriverManager.getConnection("jdbc:sqlite:unitTest.db");
         mockStatic(DriverManager.class);
