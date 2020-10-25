@@ -6,14 +6,14 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.stubbing.OngoingStubbing;
+import org.mockito.Mockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import ru.akirakozov.sd.refactoring.Main;
+import ru.akirakozov.sd.refactoring.RunTestServer;
 
 import java.sql.*;
-import java.util.List;
 
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
@@ -21,9 +21,9 @@ import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 
-@PowerMockIgnore({"javax.net.ssl.*", "javax.security.*", "jdk.internal.reflect.*"})
+@PowerMockIgnore({ "javax.net.ssl.*", "javax.security.*", "jdk.internal.reflect.*" })
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({DriverManager.class, GetProductsServlet.class})
+@PrepareForTest({ DriverManager.class, GetProductsServlet.class })
 public class GetProductsServletTest {
     private static final String WEBSITE_URL = "http://localhost:8081";
 
@@ -31,19 +31,8 @@ public class GetProductsServletTest {
     private ResultSet resultQuerySet;
 
     @BeforeClass
-    public static void runServer() throws InterruptedException {
-        Thread serverThread = new Thread(new Runnable() {
-            public void run() {
-                try {
-                    Main.main(new String[0]);
-                } catch (Exception e) {
-                    fail("Cannot start server");
-                }
-            }
-        });
-        serverThread.start();
-
-        Thread.sleep(1000);
+    public static void runServer() {
+        RunTestServer.run();
     }
 
     @Before
@@ -57,10 +46,12 @@ public class GetProductsServletTest {
         resultQuerySet = mock(ResultSet.class);
         mockStatic(DriverManager.class);
 
-        when(connection.createStatement()).thenReturn(statement);
+        when(connection.createStatement())
+                .thenReturn(statement);
         when(DriverManager.getConnection("jdbc:sqlite:test.db"))
                 .thenReturn(connection);
-        when(statement.executeQuery("SELECT * FROM PRODUCT")).thenReturn(resultQuerySet);
+        when(statement.executeQuery("SELECT * FROM PRODUCT"))
+                .thenReturn(resultQuerySet);
     }
 
     @Test
