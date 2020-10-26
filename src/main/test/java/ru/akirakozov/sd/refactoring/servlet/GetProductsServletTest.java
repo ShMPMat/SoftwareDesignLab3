@@ -8,7 +8,8 @@ import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import ru.akirakozov.sd.refactoring.SetUpServer;
+import ru.akirakozov.sd.refactoring.QueryUtil;
+import ru.akirakozov.sd.refactoring.TestServerSetUpUtil;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -28,13 +29,13 @@ public class GetProductsServletTest {
 
     @BeforeClass
     public static void runServer() {
-        SetUpServer.runServer();
+        TestServerSetUpUtil.runServer();
     }
 
     @Before
     public void start() throws SQLException {
-        webTester = SetUpServer.setUpWebTester();
-        connection = SetUpServer.setUpTestDbConnection();
+        webTester = TestServerSetUpUtil.setUpWebTester();
+        connection = TestServerSetUpUtil.setUpTestDbConnection();
 
         Connection testConnection = DriverManager.getConnection("jdbc:sqlite:unitTest.db");
         mockStatic(DriverManager.class);
@@ -50,14 +51,13 @@ public class GetProductsServletTest {
     }
 
     @Test
-    public void oneProductTest() throws SQLException {
+    public void oneProductTest() {
         String[] names = {"iphone6"};
         int[] prices = {100};
-        String sql = "INSERT INTO PRODUCT " +
-                "(NAME, PRICE) VALUES (\"" + names[0] + "\"," + prices[0] + ")";
-        Statement stmt = connection.createStatement();
-        stmt.executeUpdate(sql);
-        stmt.close();
+        QueryUtil.executeQuery(
+                "INSERT INTO PRODUCT (NAME, PRICE) VALUES " +
+                        "(\"" + names[0] + "\"," + prices[0] + ")"
+        );
 
         webTester.beginAt("/get-products");
 
@@ -70,16 +70,15 @@ public class GetProductsServletTest {
     }
 
     @Test
-    public void manyProductsTest() throws SQLException {
+    public void manyProductsTest() {
         String[] names = {"iphone6", "oven", "milk"};
         int[] prices = {100, 10, 10012};
-        String sql = "INSERT INTO PRODUCT (NAME, PRICE) VALUES " +
-                "(\"" + names[0] + "\"," + prices[0] + ")," +
-                "(\"" + names[1] + "\"," + prices[1] + ")," +
-                "(\"" + names[2] + "\"," + prices[2] + ")";
-        Statement statement = connection.createStatement();
-        statement.executeUpdate(sql);
-        statement.close();
+        QueryUtil.executeQuery(
+                "INSERT INTO PRODUCT (NAME, PRICE) VALUES " +
+                        "(\"" + names[0] + "\"," + prices[0] + ")," +
+                        "(\"" + names[1] + "\"," + prices[1] + ")," +
+                        "(\"" + names[2] + "\"," + prices[2] + ")"
+        );
 
         webTester.beginAt("/get-products");
 

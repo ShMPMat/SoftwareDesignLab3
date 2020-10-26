@@ -8,7 +8,7 @@ import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import ru.akirakozov.sd.refactoring.SetUpServer;
+import ru.akirakozov.sd.refactoring.TestServerSetUpUtil;
 
 import java.sql.*;
 
@@ -26,13 +26,13 @@ public class AddProductServletTest {
 
     @BeforeClass
     public static void runServer() {
-        SetUpServer.runServer();
+        TestServerSetUpUtil.runServer();
     }
 
     @Before
     public void start() throws SQLException {
-        webTester = SetUpServer.setUpWebTester();
-        connection = SetUpServer.setUpTestDbConnection();
+        webTester = TestServerSetUpUtil.setUpWebTester();
+        connection = TestServerSetUpUtil.setUpTestDbConnection();
 
         Connection testConnection = DriverManager.getConnection("jdbc:sqlite:unitTest.db");
         mockStatic(DriverManager.class);

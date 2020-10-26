@@ -10,7 +10,7 @@ import java.sql.Statement;
 
 import static org.junit.Assert.fail;
 
-public class SetUpServer {
+public class TestServerSetUpUtil {
     private static final String WEBSITE_URL = "http://localhost:8081";
 
     public static void runServer() {

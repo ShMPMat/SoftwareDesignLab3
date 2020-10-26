@@ -8,14 +8,14 @@ import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import ru.akirakozov.sd.refactoring.SetUpServer;
+import ru.akirakozov.sd.refactoring.QueryUtil;
+import ru.akirakozov.sd.refactoring.TestServerSetUpUtil;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
@@ -28,13 +28,13 @@ public class QueryServletTest {
 
     @BeforeClass
     public static void runServer() {
-        SetUpServer.runServer();
+        TestServerSetUpUtil.runServer();
     }
 
     @Before
     public void start() throws SQLException {
-        webTester = SetUpServer.setUpWebTester();
-        connection = SetUpServer.setUpTestDbConnection();
+        webTester = TestServerSetUpUtil.setUpWebTester();
+        connection = TestServerSetUpUtil.setUpTestDbConnection();
 
         Connection testConnection = DriverManager.getConnection("jdbc:sqlite:unitTest.db");
         mockStatic(DriverManager.class);
@@ -50,14 +50,13 @@ public class QueryServletTest {
     }
 
     @Test
-    public void singleProductMaxTest() throws SQLException {
+    public void singleProductMaxTest() {
         String[] names = {"iphone6"};
         int[] prices = {10};
-        String sql = "INSERT INTO PRODUCT (NAME, PRICE) VALUES " +
-                "(\"" + names[0] + "\"," + prices[0] + ")";
-        Statement statement = connection.createStatement();
-        statement.executeUpdate(sql);
-        statement.close();
+        QueryUtil.executeQuery(
+                "INSERT INTO PRODUCT (NAME, PRICE) VALUES " +
+                        "(\"" + names[0] + "\"," + prices[0] + ")"
+        );
 
         webTester.beginAt("/query?command=max");
 
@@ -66,16 +65,15 @@ public class QueryServletTest {
     }
 
     @Test
-    public void manyProductsMaxTest() throws SQLException {
+    public void manyProductsMaxTest() {
         String[] names = {"iphone6", "oven", "milk"};
         int[] prices = {100, 10, 10012};
-        String sql = "INSERT INTO PRODUCT (NAME, PRICE) VALUES " +
-                "(\"" + names[0] + "\"," + prices[0] + ")," +
-                "(\"" + names[1] + "\"," + prices[1] + ")," +
-                "(\"" + names[2] + "\"," + prices[2] + ")";
-        Statement statement = connection.createStatement();
-        statement.executeUpdate(sql);
-        statement.close();
+        QueryUtil.executeQuery(
+                "INSERT INTO PRODUCT (NAME, PRICE) VALUES " +
+                        "(\"" + names[0] + "\"," + prices[0] + ")," +
+                        "(\"" + names[1] + "\"," + prices[1] + ")," +
+                        "(\"" + names[2] + "\"," + prices[2] + ")"
+        );
 
         webTester.beginAt("/query?command=max");
 
@@ -84,14 +82,13 @@ public class QueryServletTest {
     }
 
     @Test
-    public void singleProductMinTest() throws SQLException {
+    public void singleProductMinTest() {
         String[] names = {"iphone6"};
         int[] prices = {10};
-        String sql = "INSERT INTO PRODUCT (NAME, PRICE) VALUES " +
-                "(\"" + names[0] + "\"," + prices[0] + ")";
-        Statement statement = connection.createStatement();
-        statement.executeUpdate(sql);
-        statement.close();
+        QueryUtil.executeQuery(
+                "INSERT INTO PRODUCT (NAME, PRICE) VALUES " +
+                        "(\"" + names[0] + "\"," + prices[0] + ")"
+        );
 
         webTester.beginAt("/query?command=min");
 
@@ -100,16 +97,15 @@ public class QueryServletTest {
     }
 
     @Test
-    public void manyProductsMinTest() throws SQLException {
+    public void manyProductsMinTest() {
         String[] names = {"iphone6", "oven", "milk"};
         int[] prices = {100, 10, 10012};
-        String sql = "INSERT INTO PRODUCT (NAME, PRICE) VALUES " +
-                "(\"" + names[0] + "\"," + prices[0] + ")," +
-                "(\"" + names[1] + "\"," + prices[1] + ")," +
-                "(\"" + names[2] + "\"," + prices[2] + ")";
-        Statement statement = connection.createStatement();
-        statement.executeUpdate(sql);
-        statement.close();
+        QueryUtil.executeQuery(
+                "INSERT INTO PRODUCT (NAME, PRICE) VALUES " +
+                        "(\"" + names[0] + "\"," + prices[0] + ")," +
+                        "(\"" + names[1] + "\"," + prices[1] + ")," +
+                        "(\"" + names[2] + "\"," + prices[2] + ")"
+        );
 
         webTester.beginAt("/query?command=min");
 
@@ -118,14 +114,13 @@ public class QueryServletTest {
     }
 
     @Test
-    public void singleSumTest() throws SQLException {
+    public void singleSumTest() {
         String[] names = {"iphone6"};
         int[] prices = {10};
-        String sql = "INSERT INTO PRODUCT (NAME, PRICE) VALUES " +
-                "(\"" + names[0] + "\"," + prices[0] + ")";
-        Statement statement = connection.createStatement();
-        statement.executeUpdate(sql);
-        statement.close();
+        QueryUtil.executeQuery(
+                "INSERT INTO PRODUCT (NAME, PRICE) VALUES " +
+                        "(\"" + names[0] + "\"," + prices[0] + ")"
+        );
 
         webTester.beginAt("/query?command=sum");
 
@@ -133,16 +128,15 @@ public class QueryServletTest {
     }
 
     @Test
-    public void manyProductsSumTest() throws SQLException {
+    public void manyProductsSumTest() {
         String[] names = {"iphone6", "oven", "milk"};
         int[] prices = {100, 10, 10000};
-        String sql = "INSERT INTO PRODUCT (NAME, PRICE) VALUES " +
-                "(\"" + names[0] + "\"," + prices[0] + ")," +
-                "(\"" + names[1] + "\"," + prices[1] + ")," +
-                "(\"" + names[2] + "\"," + prices[2] + ")";
-        Statement statement = connection.createStatement();
-        statement.executeUpdate(sql);
-        statement.close();
+        QueryUtil.executeQuery(
+                "INSERT INTO PRODUCT (NAME, PRICE) VALUES " +
+                        "(\"" + names[0] + "\"," + prices[0] + ")," +
+                        "(\"" + names[1] + "\"," + prices[1] + ")," +
+                        "(\"" + names[2] + "\"," + prices[2] + ")"
+        );
 
         webTester.beginAt("/query?command=sum");
 
@@ -150,14 +144,13 @@ public class QueryServletTest {
     }
 
     @Test
-    public void singleCountTest() throws SQLException {
+    public void singleCountTest() {
         String[] names = {"iphone6"};
         int[] prices = {10};
-        String sql = "INSERT INTO PRODUCT (NAME, PRICE) VALUES " +
-                "(\"" + names[0] + "\"," + prices[0] + ")";
-        Statement statement = connection.createStatement();
-        statement.executeUpdate(sql);
-        statement.close();
+        QueryUtil.executeQuery(
+                "INSERT INTO PRODUCT (NAME, PRICE) VALUES " +
+                        "(\"" + names[0] + "\"," + prices[0] + ")"
+        );
 
         webTester.beginAt("/query?command=count");
 
@@ -165,16 +158,15 @@ public class QueryServletTest {
     }
 
     @Test
-    public void manyProductsCountTest() throws SQLException {
+    public void manyProductsCountTest() {
         String[] names = {"iphone6", "oven", "milk"};
         int[] prices = {100, 10, 10000};
-        String sql = "INSERT INTO PRODUCT (NAME, PRICE) VALUES " +
-                "(\"" + names[0] + "\"," + prices[0] + ")," +
-                "(\"" + names[1] + "\"," + prices[1] + ")," +
-                "(\"" + names[2] + "\"," + prices[2] + ")";
-        Statement statement = connection.createStatement();
-        statement.executeUpdate(sql);
-        statement.close();
+        QueryUtil.executeQuery(
+                "INSERT INTO PRODUCT (NAME, PRICE) VALUES " +
+                        "(\"" + names[0] + "\"," + prices[0] + ")," +
+                        "(\"" + names[1] + "\"," + prices[1] + ")," +
+                        "(\"" + names[2] + "\"," + prices[2] + ")"
+        );
 
         webTester.beginAt("/query?command=count");
 
