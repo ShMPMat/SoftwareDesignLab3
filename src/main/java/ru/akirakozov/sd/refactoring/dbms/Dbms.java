@@ -11,6 +11,34 @@ public class Dbms {
         this.databasePath = databasePath;
     }
 
+    public void addProduct(Product product) {
+        try {
+            try (Connection c = DriverManager.getConnection("jdbc:sqlite:test.db")) {
+                String sql = "INSERT INTO PRODUCT " +
+                        "(NAME, PRICE) VALUES (\"" + product.getName() + "\"," + product.getPrice() + ")";
+                try (Statement stmt = c.createStatement()) {
+                    stmt.executeUpdate(sql);
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public List<Product> getProducts() {
+        try {
+            try (Connection c = DriverManager.getConnection(databasePath)) {
+                try (Statement stmt = c.createStatement()) {
+                    try (ResultSet rs = stmt.executeQuery("SELECT * FROM PRODUCT")) {
+                        return getProductsFromResultSet(rs);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public List<Product> getProductMax() {
         try {
             try (Connection c = DriverManager.getConnection(databasePath)) {
