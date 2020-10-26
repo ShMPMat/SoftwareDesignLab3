@@ -21,9 +21,8 @@ import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 @PowerMockIgnore({"javax.net.ssl.*", "javax.security.*", "jdk.internal.reflect.*"})
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({DriverManager.class, GetProductsServlet.class, AddProductServlet.class})
+@PrepareForTest({DriverManager.class, GetProductsServlet.class, AddProductServlet.class, QueryServlet.class})
 public class GetProductsServletTest {
-
     private WebTester webTester;
     private Connection connection;
 
@@ -43,8 +42,9 @@ public class GetProductsServletTest {
                 .thenReturn(testConnection);
     }
 
+
     @Test
-    public void connectionTest() throws SQLException {
+    public void connectionTest() {
         webTester.beginAt("/get-products");
         webTester.assertResponseCode(200);
     }

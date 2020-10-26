@@ -19,10 +19,8 @@ import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 @PowerMockIgnore({"javax.net.ssl.*", "javax.security.*", "jdk.internal.reflect.*"})
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({DriverManager.class, GetProductsServlet.class, AddProductServlet.class})
+@PrepareForTest({DriverManager.class, GetProductsServlet.class, AddProductServlet.class, QueryServlet.class})
 public class AddProductServletTest {
-    private static final String WEBSITE_URL = "http://localhost:8081";
-
     private WebTester webTester;
     private Connection connection;
 
@@ -41,6 +39,7 @@ public class AddProductServletTest {
         when(DriverManager.getConnection("jdbc:sqlite:test.db"))
                 .thenReturn(testConnection);
     }
+
 
     @Test
     public void connectionTest() {
