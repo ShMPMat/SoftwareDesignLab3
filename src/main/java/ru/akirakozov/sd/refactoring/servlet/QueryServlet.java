@@ -1,16 +1,13 @@
 package ru.akirakozov.sd.refactoring.servlet;
 
 import ru.akirakozov.sd.refactoring.dbms.DbmsFactory;
+import ru.akirakozov.sd.refactoring.dbms.Product;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
 
 /**
  * @author akirakozov
@@ -42,62 +39,36 @@ public class QueryServlet extends HttpServlet {
     }
 
     private void doGetMax(PrintWriter writer) {
-        try {
-            try (Connection c = DriverManager.getConnection("jdbc:sqlite:test.db")) {
-                Statement stmt = c.createStatement();
-                ResultSet rs = stmt.executeQuery("SELECT * FROM PRODUCT ORDER BY PRICE DESC LIMIT 1");
-                writer.println("<html><body>");
-                writer.println("<h1>Product with max price: </h1>");
+        writer.println("<html><body>");
+        writer.println("<h1>Product with max price: </h1>");
 
-                while (rs.next()) {
-                    String name = rs.getString("name");
-                    int price = rs.getInt("price");
-                    writer.println(name + "\t" + price + "</br>");
-                }
-                writer.println("</body></html>");
-
-                rs.close();
-                stmt.close();
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        for (Product product : DbmsFactory.getDbms().getProductMax()) {
+            writer.println(product.getName() + "\t" + product.getPrice() + "</br>");
         }
+        writer.println("</body></html>");
     }
 
     private void doGetMin(PrintWriter writer) {
-        try {
-            try (Connection c = DriverManager.getConnection("jdbc:sqlite:test.db")) {
-                Statement stmt = c.createStatement();
-                ResultSet rs = stmt.executeQuery("SELECT * FROM PRODUCT ORDER BY PRICE LIMIT 1");
-                writer.println("<html><body>");
-                writer.println("<h1>Product with min price: </h1>");
+        writer.println("<html><body>");
+        writer.println("<h1>Product with min price: </h1>");
 
-                while (rs.next()) {
-                    String name = rs.getString("name");
-                    int price = rs.getInt("price");
-                    writer.println(name + "\t" + price + "</br>");
-                }
-                writer.println("</body></html>");
-
-                rs.close();
-                stmt.close();
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        for (Product product : DbmsFactory.getDbms().getProductMin()) {
+            writer.println(product.getName() + "\t" + product.getPrice() + "</br>");
         }
+        writer.println("</body></html>");
     }
 
     private void doGetSum(PrintWriter writer) {
         writer.println("<html><body>");
         writer.println("Summary price: ");
-        writer.println(DbmsFactory.getDbms().sumProductPrices());
+        writer.println(DbmsFactory.getDbms().getProductPricesSum());
         writer.println("</body></html>");
     }
 
     private void doGetCount(PrintWriter writer) {
         writer.println("<html><body>");
         writer.println("Number of products: ");
-        writer.println(DbmsFactory.getDbms().countProducts());
+        writer.println(DbmsFactory.getDbms().getProductCount());
         writer.println("</body></html>");
     }
 }
