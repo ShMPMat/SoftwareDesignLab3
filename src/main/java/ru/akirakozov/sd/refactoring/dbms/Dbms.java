@@ -26,45 +26,15 @@ public class Dbms {
     }
 
     public List<Product> getProducts() {
-        try {
-            try (Connection c = DriverManager.getConnection(databasePath)) {
-                try (Statement stmt = c.createStatement()) {
-                    try (ResultSet rs = stmt.executeQuery("SELECT * FROM PRODUCT")) {
-                        return getProductsFromResultSet(rs);
-                    }
-                }
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        return getProductsFromQuery("SELECT * FROM PRODUCT");
     }
 
     public List<Product> getProductMax() {
-        try {
-            try (Connection c = DriverManager.getConnection(databasePath)) {
-                try (Statement stmt = c.createStatement()) {
-                    try (ResultSet rs = stmt.executeQuery("SELECT * FROM PRODUCT ORDER BY PRICE DESC LIMIT 1")) {
-                        return getProductsFromResultSet(rs);
-                    }
-                }
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        return getProductsFromQuery("SELECT * FROM PRODUCT ORDER BY PRICE DESC LIMIT 1");
     }
 
     public List<Product> getProductMin() {
-        try {
-            try (Connection c = DriverManager.getConnection(databasePath)) {
-                try (Statement stmt = c.createStatement()) {
-                    try (ResultSet rs = stmt.executeQuery("SELECT * FROM PRODUCT ORDER BY PRICE LIMIT 1")) {
-                        return getProductsFromResultSet(rs);
-                    }
-                }
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        return getProductsFromQuery("SELECT * FROM PRODUCT ORDER BY PRICE LIMIT 1");
     }
 
     public int getProductCount() {
@@ -95,6 +65,21 @@ public class Dbms {
                         } else {
                             throw new RuntimeException("No result for Sum");
                         }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    
+    public List<Product> getProductsFromQuery(String sql) {
+        try {
+            try (Connection c = DriverManager.getConnection(databasePath)) {
+                try (Statement stmt = c.createStatement()) {
+                    try (ResultSet rs = stmt.executeQuery(sql)) {
+                        return getProductsFromResultSet(rs);
                     }
                 }
             }
