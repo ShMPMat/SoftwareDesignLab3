@@ -88,24 +88,10 @@ public class QueryServlet extends HttpServlet {
     }
 
     private void doGetSum(PrintWriter writer) {
-        try {
-            try (Connection c = DriverManager.getConnection("jdbc:sqlite:test.db")) {
-                Statement stmt = c.createStatement();
-                ResultSet rs = stmt.executeQuery("SELECT SUM(price) FROM PRODUCT");
-                writer.println("<html><body>");
-                writer.println("Summary price: ");
-
-                if (rs.next()) {
-                    writer.println(rs.getInt(1));
-                }
-                writer.println("</body></html>");
-
-                rs.close();
-                stmt.close();
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        writer.println("<html><body>");
+        writer.println("Summary price: ");
+        writer.println(DbmsFactory.getDbms().sumProductPrices());
+        writer.println("</body></html>");
     }
 
     private void doGetCount(PrintWriter writer) {
