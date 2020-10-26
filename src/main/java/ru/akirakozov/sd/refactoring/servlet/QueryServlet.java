@@ -1,13 +1,13 @@
 package ru.akirakozov.sd.refactoring.servlet;
 
 import ru.akirakozov.sd.refactoring.dbms.DbmsFactory;
-import ru.akirakozov.sd.refactoring.dbms.Product;
+import ru.akirakozov.sd.refactoring.html.HtmlResponseWriter;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
+
 
 /**
  * @author akirakozov
@@ -16,59 +16,45 @@ public class QueryServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String command = request.getParameter("command");
+        HtmlResponseWriter writer = new HtmlResponseWriter(response);
 
         switch (request.getParameter("command")) {
             case "max":
-                doGetMax(response.getWriter());
+                doGetMax(writer);
                 break;
             case "min":
-                doGetMin(response.getWriter());
+                doGetMin(writer);
                 break;
             case "sum":
-                doGetSum(response.getWriter());
+                doGetSum(writer);
                 break;
             case "count":
-                doGetCount(response.getWriter());
+                doGetCount(writer);
                 break;
             default:
-                response.getWriter().println("Unknown command: " + command);
+                writer.printText("Unknown command: " + command);
         }
 
-        response.setContentType("text/html");
-        response.setStatus(HttpServletResponse.SC_OK);
+        writer.end();
     }
 
-    private void doGetMax(PrintWriter writer) {
-        writer.println("<html><body>");
-        writer.println("<h1>Product with max price: </h1>");
-
-        for (Product product : DbmsFactory.getDbms().getProductMax()) {
-            writer.println(product.getName() + "\t" + product.getPrice() + "</br>");
-        }
-        writer.println("</body></html>");
+    private void doGetMax(HtmlResponseWriter writer) throws IOException {
+        writer.printHeader("Product with max price: ");
+        writer.printProducts(DbmsFactory.getDbms().getProductMax());
     }
 
-    private void doGetMin(PrintWriter writer) {
-        writer.println("<html><body>");
-        writer.println("<h1>Product with min price: </h1>");
-
-        for (Product product : DbmsFactory.getDbms().getProductMin()) {
-            writer.println(product.getName() + "\t" + product.getPrice() + "</br>");
-        }
-        writer.println("</body></html>");
+    private void doGetMin(HtmlResponseWriter writer) throws IOException {
+        writer.printHeader("Product with min price: ");
+        writer.printProducts(DbmsFactory.getDbms().getProductMin());
     }
 
-    private void doGetSum(PrintWriter writer) {
-        writer.println("<html><body>");
-        writer.println("Summary price: ");
-        writer.println(DbmsFactory.getDbms().getProductPricesSum());
-        writer.println("</body></html>");
+    private void doGetSum(HtmlResponseWriter writer) throws IOException {
+        writer.printText("Summary price: ");
+        writer.printText(String.valueOf(DbmsFactory.getDbms().getProductPricesSum()));
     }
 
-    private void doGetCount(PrintWriter writer) {
-        writer.println("<html><body>");
-        writer.println("Number of products: ");
-        writer.println(DbmsFactory.getDbms().getProductCount());
-        writer.println("</body></html>");
+    private void doGetCount(HtmlResponseWriter writer) throws IOException {
+        writer.printText("Number of products: ");
+        writer.printText(String.valueOf(DbmsFactory.getDbms().getProductCount()));
     }
 }

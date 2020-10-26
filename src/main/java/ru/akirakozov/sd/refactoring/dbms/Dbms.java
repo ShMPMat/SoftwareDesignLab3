@@ -73,7 +73,7 @@ public class Dbms {
         }
     }
 
-    
+
     public List<Product> getProductsFromQuery(String sql) {
         try {
             try (Connection c = DriverManager.getConnection(databasePath)) {
