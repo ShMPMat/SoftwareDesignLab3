@@ -1,11 +1,12 @@
 package ru.akirakozov.sd.refactoring.servlet;
 
+import ru.akirakozov.sd.refactoring.dbms.DbmsFactory;
+
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.Writer;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -108,23 +109,9 @@ public class QueryServlet extends HttpServlet {
     }
 
     private void doGetCount(PrintWriter writer) {
-        try {
-            try (Connection c = DriverManager.getConnection("jdbc:sqlite:test.db")) {
-                Statement stmt = c.createStatement();
-                ResultSet rs = stmt.executeQuery("SELECT COUNT(*) FROM PRODUCT");
-                writer.println("<html><body>");
-                writer.println("Number of products: ");
-
-                if (rs.next()) {
-                    writer.println(rs.getInt(1));
-                }
-                writer.println("</body></html>");
-
-                rs.close();
-                stmt.close();
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        writer.println("<html><body>");
+        writer.println("Number of products: ");
+        writer.println(DbmsFactory.getDbms().countProducts());
+        writer.println("</body></html>");
     }
 }

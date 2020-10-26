@@ -10,18 +10,18 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import ru.akirakozov.sd.refactoring.QueryUtil;
 import ru.akirakozov.sd.refactoring.TestServerSetUpUtil;
+import ru.akirakozov.sd.refactoring.dbms.Dbms;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 @PowerMockIgnore({"javax.net.ssl.*", "javax.security.*", "jdk.internal.reflect.*"})
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({DriverManager.class, GetProductsServlet.class, AddProductServlet.class, QueryServlet.class})
+@PrepareForTest({DriverManager.class, GetProductsServlet.class, AddProductServlet.class, QueryServlet.class, Dbms.class})
 public class QueryServletTest {
     private WebTester webTester;
     private Connection connection;
